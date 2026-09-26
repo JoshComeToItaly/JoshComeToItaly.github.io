@@ -1,4 +1,4 @@
-theme: jekyll-themes/architect@v0.2.0
+theme: pages-themes/architect@v0.2.0
 title: Josh Itinerary Builder
 plugins:
 - jekyll-remote-theme
