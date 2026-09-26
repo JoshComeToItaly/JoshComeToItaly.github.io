@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Italy Trip Planner</title>
+<title>European Trip Planner</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <style>
     * {
@@ -61,6 +62,150 @@
         gap: 18px;
     }
 
+    .route-stays {
+        display: grid;
+        gap: 10px;
+        margin-bottom: 16px;
+    }
+
+    .route-stay {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 12px 14px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        background: #fff;
+    }
+
+    .route-stay-info {
+        display: grid;
+        gap: 3px;
+    }
+
+    .route-stay-recommendation {
+        color: #777;
+        font-size: 13px;
+    }
+
+    .stay-control {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .stay-control select {
+        width: auto;
+        min-width: 112px;
+        margin-top: 0;
+    }
+
+    .route-stay-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .destination-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .add-destination {
+        padding: 10px 14px;
+        border-radius: 8px;
+        background: #147a4b;
+        color: #fff;
+        font-weight: 700;
+    }
+
+    .add-destination:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+
+    .remove-city {
+        display: inline-flex;
+        width: 36px;
+        height: 36px;
+        flex: none;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background: #fff;
+        color: #666;
+        font-size: 22px;
+        line-height: 1;
+        text-align: center;
+    }
+
+    .remove-city:hover {
+        border-color: #b94a48;
+        color: #a33;
+    }
+
+    .remove-city:focus-visible {
+        outline: 2px solid #147a4b;
+        outline-offset: 2px;
+    }
+
+    .route-slots {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .route-slot {
+        display: flex;
+        min-width: 0;
+        min-height: 76px;
+        flex-direction: column;
+        justify-content: center;
+        gap: 6px;
+        padding: 12px 14px;
+        border: 1px dashed #c8cec9;
+        border-radius: 10px;
+        background: #fafaf8;
+    }
+
+    .route-travel {
+        display: flex;
+        min-height: 32px;
+        align-items: center;
+        margin-left: 20px;
+        padding-left: 12px;
+        border-left: 1px solid #c8cec9;
+        color: #666;
+        font-size: 12px;
+    }
+
+    .route-slot-day {
+        color: #777;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .route-slot strong {
+        font-size: 15px;
+    }
+
+    .route-slot-empty strong {
+        color: #929894;
+        font-weight: 500;
+    }
+
     label.field {
         display: block;
         font-weight: 600;
@@ -80,6 +225,113 @@
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
         gap: 10px;
+    }
+
+    .destination-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(280px, 1fr);
+        gap: 18px;
+        align-items: start;
+    }
+
+    #city-map {
+        height: 360px;
+        border-radius: 12px;
+        z-index: 0;
+    }
+
+    .map-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-top: 8px;
+        color: #666;
+        font-size: 12px;
+    }
+
+    .map-legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .map-legend i {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+    }
+
+    .map-legend .selected-marker {
+        background: #147a4b;
+    }
+
+    .map-legend .recommended-marker {
+        background: #d97706;
+    }
+
+    .recommended-edge-icon {
+        border: 0;
+        background: transparent;
+    }
+
+    .recommended-edge-label {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        width: 120px;
+        min-height: 26px;
+        padding: 3px 7px;
+        border: 1px solid #d97706;
+        border-radius: 7px;
+        background: rgba(255, 255, 255, 0.96);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        color: #74400a;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .recommended-edge-arrow {
+        flex: none;
+        color: #d97706;
+        font-size: 16px;
+        line-height: 1;
+    }
+
+    .recommended-edge-name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .city-details {
+        margin-top: 12px;
+        padding: 14px 16px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        background: #fafaf8;
+    }
+
+    .city-details h3 {
+        margin: 0 0 6px;
+        font-size: 18px;
+    }
+
+    .city-details p {
+        margin: 0 0 10px;
+        color: #666;
+        font-size: 14px;
+    }
+
+    .city-details h4 {
+        margin: 0 0 5px;
+        font-size: 14px;
+    }
+
+    .city-details ul {
+        margin: 0;
+        padding-left: 20px;
+        color: #444;
+        font-size: 14px;
     }
 
     .city-option {
@@ -286,6 +538,23 @@
         background: white;
     }
 
+    .destination-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    }
+
+    #city-map {
+        min-height: 360px;
+        border-radius: 12px;
+    }
+
+@media (max-width: 650px) {
+    .destination-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
     @media (max-width: 650px) {
         .container {
             padding: 22px 14px 40px;
@@ -293,6 +562,34 @@
 
         .form-grid {
             grid-template-columns: 1fr;
+        }
+
+        .destination-actions {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .route-stay {
+            align-items: stretch;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .stay-control {
+            flex: 1;
+            justify-content: space-between;
+        }
+
+        .stay-control select {
+            flex: 1;
+        }
+
+        .destination-layout {
+            grid-template-columns: 1fr;
+        }
+
+        #city-map {
+            height: 300px;
         }
 
         .card {
@@ -338,46 +635,31 @@
 <div class="container">
 
 <header>
-    <div class="flag">🇮🇹</div>
-    <h1>Italy Trip Planner</h1>
-    <p>Build a personalized itinerary for your Italian adventure.</p>
+    <div class="flag"></div>
+    <h1>European Trip Planner</h1>
+    <p>Build a personalized itinerary for your European adventure.</p>
 </header>
 
 <div class="setup">
 
     <div class="card">
-        <h2>1. Tell me about the trip</h2>
-
-        <div class="form-grid">
-
-            <label class="field">
-                Starting from
-                <select id="home">
-                    <option value="trieste">Trieste</option>
-                    <option value="venice">Venice</option>
-                    <option value="milan">Milan</option>
-                    <option value="bologna">Bologna</option>
-                    <option value="florence">Florence</option>
-                    <option value="rome">Rome</option>
-                </select>
-            </label>
-
-            <label class="field">
-                Number of days
-                <select id="days">
-                    <option value="2">2 days</option>
-                    <option value="3">3 days</option>
-                    <option value="4" selected>4 days</option>
-                    <option value="5">5 days</option>
-                    <option value="6">6 days</option>
-                    <option value="7">7 days</option>
-                    <option value="8">8 days</option>
-                    <option value="9">9 days</option>
-                    <option value="10">10 days</option>
-                </select>
-            </label>
-
-        </div>
+        <h2>Your route</h2>
+        <label class="field">
+            Number of days
+            <select id="days">
+                <option value="2">2 days</option>
+                <option value="3">3 days</option>
+                <option value="4" selected>4 days</option>
+                <option value="5">5 days</option>
+                <option value="6">6 days</option>
+                <option value="7">7 days</option>
+                <option value="8">8 days</option>
+                <option value="9">9 days</option>
+                <option value="10">10 days</option>
+            </select>
+        </label>
+        <div class="route-stays" id="route-stays"></div>
+        <div class="route-slots" id="route-slots" role="list" aria-label="Trip route"></div>
     </div>
 
 
@@ -385,42 +667,34 @@
 
         <div class="section-header">
             <div>
-                <h2 style="margin-bottom:4px;">2. Where would you like to go?</h2>
+                <h2 style="margin-bottom:4px;">Where would you like to go?</h2>
                 <div style="color:#777;font-size:14px;">
-                    Select as many destinations as you'd like.
+                    Select one city, then add it to your route.
                 </div>
             </div>
-
-            <button class="secondary" id="recommended">
-                Select recommended
+            <button class="add-destination" id="add-destination" type="button" disabled>
+                Add destination
             </button>
         </div>
 
         <br>
 
-        <div class="city-grid" id="city-list"></div>
+        <div class="destination-layout">
+            <div class="city-grid" id="city-list"></div>
+            <div>
+                <div id="city-map" aria-label="Map of destination cities"></div>
+                <div class="map-legend" aria-label="Map marker legend">
+                    <span><i class="selected-marker"></i> Selected</span>
+                    <span><i class="recommended-marker"></i> Recommended next</span>
+                </div>
+                <section id="city-details" class="city-details" aria-live="polite">
+                    <p>Select a city to see its description and stops.</p>
+                </section>
+            </div>
+        </div>
 
     </div>
 
-
-    <div class="card">
-
-        <h2>3. What do you enjoy?</h2>
-
-        <div class="interest-list" id="interest-list"></div>
-
-    </div>
-
-
-    <div class="card">
-
-        <button class="primary" id="build">
-            ✨ Build My Itinerary
-        </button>
-
-        <div id="error" class="error"></div>
-
-    </div>
 
 </div>
 
@@ -433,7 +707,7 @@
 
             <div>
                 <div style="color:#147a4b;font-size:13px;font-weight:bold;">
-                    YOUR ITALIAN ADVENTURE
+                    YOUR EUROPEAN ADVENTURE
                 </div>
 
                 <h2 id="itinerary-title" style="font-size:30px;margin:5px 0;">
@@ -458,6 +732,7 @@
 </div>
 
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 
 /*
@@ -479,150 +754,294 @@ const cities = {
     trieste: {
         name: "Trieste",
         region: "Friuli-Venezia Giulia",
-        tags: ["history", "food", "scenery"],
         description:
             "A beautiful port city with Austro-Hungarian architecture, excellent coffee and a relaxed Mediterranean atmosphere.",
         stops: [
-            ["Piazza Unità d’Italia", "Morning"],
-            ["Canal Grande", "Late morning"],
-            ["Caffè historic coffee stop", "Lunch"],
-            ["San Giusto Castle & Cathedral", "Afternoon"],
-            ["Sunset along the waterfront", "Evening"]
-        ]
+            "Piazza Unità d’Italia",
+            "Canal Grande",
+            "Caffè historic coffee stop",
+            "San Giusto Castle & Cathedral",
+            "Sunset along the waterfront",
+            "The boys"],
+        coordinates: [45.6495, 13.7768],
+        recommendedNext: [
+            ["Ljubljana", 1.5],
+            ["Bled", 2],
+            ["Venice", 2],
+            ["Graz", 4],
+            ["Vienna", 6],
+            ["Barcelona", 2]
+        ],
+        stayLength: "1-2"
     },
 
     venice: {
         name: "Venice",
         region: "Veneto",
-        tags: ["history", "food", "scenery", "art"],
         description:
             "Spend the day getting lost among canals, bridges and historic neighborhoods.",
         stops: [
-            ["St. Mark’s Square", "Morning"],
-            ["Doge’s Palace", "Late morning"],
-            ["Rialto Market & lunch", "Lunch"],
-            ["Dorsoduro", "Afternoon"],
-            ["Cannaregio", "Evening"]
-        ]
+            "St. Mark’s Square",
+            "Doge’s Palace",
+            "Rialto Market & lunch",
+            "Dorsoduro",
+            "Cannaregio"],
+        coordinates: [45.4371, 12.3326],
+        recommendedNext: [
+            ["Trieste", 2],
+            ["Verona", 1],
+            ["Bologna", 1.5],
+            ["Florence", 2.5],
+            ["Milan", 2.5]
+        ],
+        stayLength: "1-2"
     },
 
     ljubljana: {
         name: "Ljubljana",
         region: "Slovenia",
-        tags: ["history", "food", "scenery"],
         description:
             "A compact and charming city that is easy to explore on foot.",
         stops: [
-            ["Ljubljana Old Town", "Morning"],
-            ["Central Market", "Late morning"],
-            ["Lunch beside the river", "Lunch"],
-            ["Ljubljana Castle", "Afternoon"],
-            ["Riverfront cafés", "Evening"]
-        ]
+            "Ljubljana Old Town",
+            "Central Market",
+            "Lunch beside the river",
+            "Ljubljana Castle",
+            "Riverfront cafés"],
+        coordinates: [46.0511, 14.5056],
+        recommendedNext: [
+            ["Trieste", 1.5],
+            ["Bled", 1],
+            ["Graz", 2.5],
+            ["Vienna", 5]
+        ],
+        stayLength: "1"
     },
 
     bled: {
         name: "Lake Bled",
         region: "Slovenia",
-        tags: ["scenery"],
         description:
             "A spectacular alpine lake that makes an excellent day trip.",
         stops: [
-            ["Walk around Lake Bled", "Morning"],
-            ["Bled Island", "Late morning"],
-            ["Traditional cream cake & lunch", "Lunch"],
-            ["Bled Castle", "Afternoon"],
-            ["Lake viewpoint", "Evening"]
-        ]
+            "Walk around Lake Bled",
+            "Bled Island",
+            "Traditional cream cake & lunch",
+            "Bled Castle",
+            "Lake viewpoint"],
+        coordinates: [46.3625, 14.0940],
+        recommendedNext: [
+            ["Ljubljana", 1],
+            ["Trieste", 2],
+            ["Venice", 4],
+            ["Graz", 2.5],
+            ["Vienna", 5]
+        ],
+        stayLength: "1"
     },
 
     verona: {
         name: "Verona",
         region: "Veneto",
-        tags: ["history", "food", "scenery", "art"],
         description:
             "A beautiful historic center with Roman architecture, piazzas and excellent restaurants.",
         stops: [
-            ["Verona Arena", "Morning"],
-            ["Piazza delle Erbe", "Late morning"],
-            ["Lunch in the historic center", "Lunch"],
-            ["Castelvecchio", "Afternoon"],
-            ["Ponte Pietra & evening aperitivo", "Evening"]
-        ]
+            "Verona Arena",
+            "Piazza delle Erbe",
+            "Lunch in the historic center",
+            "Castelvecchio",
+            "Ponte Pietra & evening aperitivo"],
+        coordinates: [45.4384, 10.9916],
+        recommendedNext: [
+            ["Venice", 1],
+            ["Bologna", 1],
+            ["Milan", 1],
+            ["Florence", 1.5],
+            ["Trieste", 3],
+            ["Rome", 3]
+        ],
+        stayLength: "1-2"
     },
 
     bologna: {
         name: "Bologna",
         region: "Emilia-Romagna",
-        tags: ["food", "history", "art"],
         description:
             "One of Italy's great food cities, famous for its porticoes and medieval center.",
         stops: [
-            ["Piazza Maggiore", "Morning"],
-            ["Two Towers", "Late morning"],
-            ["Quadrilatero food market", "Lunch"],
-            ["Santo Stefano", "Afternoon"],
-            ["Traditional Bolognese dinner", "Evening"]
-        ]
+            "Piazza Maggiore",
+            "Two Towers",
+            "Quadrilatero food market",
+            "Santo Stefano",
+            "Traditional Bolognese dinner"],
+        coordinates: [44.4949, 11.3426],
+        recommendedNext: [
+            ["Florence", 1],
+            ["Verona", 1.5],
+            ["Venice", 2],
+            ["Milan", 2],
+            ["Trieste", 3.5],
+            ["Rome", 2.5],
+            ["Barcelona", 2]
+        ],
+        stayLength: "1-2"
     },
 
     florence: {
         name: "Florence",
         region: "Tuscany",
-        tags: ["history", "art", "food", "scenery"],
         description:
-            "The heart of Renaissance Italy, packed with extraordinary art and architecture.",
+            "The heart of Renaissance Italy, packed with extraordinary art and architecture. Nat's family lives here, so we stay for free!",
         stops: [
-            ["Florence Cathedral", "Morning"],
-            ["Piazza della Signoria", "Late morning"],
-            ["Central Market", "Lunch"],
-            ["Uffizi / Renaissance art", "Afternoon"],
-            ["Ponte Vecchio & Oltrarno", "Evening"]
-        ]
+            "Florence Cathedral",
+            "Piazza della Signoria",
+            "Central Market",
+            "Uffizi / Renaissance art",
+            "Ponte Vecchio & Oltrarno"],
+        coordinates: [43.7696, 11.2558],
+        recommendedNext: [
+            ["Rome", 1.5],
+            ["Bologna", 1],
+            ["Venice", 2],
+            ["Milan", 2],
+            ["Verona", 1.5],
+            ["Trieste", 4],
+            ["Pisa", 1]
+        ],
+        stayLength: "2-3"
     },
 
     milan: {
         name: "Milan",
         region: "Lombardy",
-        tags: ["art", "food", "shopping", "history"],
         description:
             "Italy's modern capital of design, fashion and business, with a fascinating historic center.",
         stops: [
-            ["Milan Cathedral", "Morning"],
-            ["Galleria Vittorio Emanuele II", "Late morning"],
-            ["Brera", "Lunch"],
-            ["Sforza Castle", "Afternoon"],
-            ["Navigli aperitivo", "Evening"]
-        ]
+            "Milan Cathedral",
+            "Galleria Vittorio Emanuele II",
+            "Brera",
+            "Sforza Castle",
+            "Navigli aperitivo"],
+        coordinates: [45.4642, 9.1900],
+        recommendedNext: [
+            ["Verona", 2],
+            ["Bologna", 2],
+            ["Florence", 3],
+            ["Venice", 4],
+            ["Barcelona", 2]
+        ],
+        stayLength: "1-2"
     },
 
     rome: {
         name: "Rome",
         region: "Lazio",
-        tags: ["history", "art", "food"],
         description:
             "Ancient ruins, Renaissance masterpieces and some of Italy's best food.",
         stops: [
-            ["Colosseum", "Morning"],
-            ["Roman Forum", "Late morning"],
-            ["Pantheon & lunch", "Lunch"],
-            ["Trevi Fountain", "Afternoon"],
-            ["Trastevere", "Evening"]
-        ]
+            "Colosseum",
+            "Roman Forum",
+            "Pantheon & lunch",
+            "Trevi Fountain",
+            "Trastevere"],
+        coordinates: [41.9028, 12.4964],
+        recommendedNext: [
+            ["Florence", 2],
+            ["Bologna", 2],
+            ["Venice", 4],
+            ["Milan", 3],
+            ["Verona", 3],
+            ["Barcelona", 2]
+        ],
+        stayLength: "2-3"
+    },
+
+    barcelona: {
+        name: "Barcelona",
+        region: "Catalonia, Spain",
+        description:
+            "A vibrant city with a unique blend of Gothic and modernist architecture.",
+        stops: [
+            "Sagrada Família",
+            "Gothic Quarter",
+            "La Boqueria Market & lunch",
+            "Park Güell",
+            "Barceloneta Beach"],
+        coordinates: [41.3851, 2.1734],
+        recommendedNext: [
+            ["Trieste", 2],
+            ["Rome", 2],
+            ["Milan", 2],
+            ["Bologna", 2]
+        ],
+        stayLength: "1-3"
+    },
+
+    vienna: {
+        name: "Vienna",
+        region: "Austria",
+        description:
+            "A city of imperial palaces, classical music, and rich coffeehouse culture.",
+        stops: [
+            "Vienna Architectural Museum",
+            "Schönbrunn Palace",
+            "St. Stephen's Cathedral",
+            "Naschmarkt & lunch",
+            "Belvedere Palace",
+            "Viennese coffeehouse experience"],
+        coordinates: [48.2082, 16.3738],
+        recommendedNext: [
+            ["Graz", 2.5],
+            ["Ljubljana", 6],
+            ["Trieste", 6.5],
+            ["Venice", 7]
+        ],
+        stayLength: "2-3"
+    },
+
+    graz: {
+        name: "Graz",
+        region: "Styria, Austria",
+        description:
+            "A charming city with a mix of Renaissance and modern architecture, known for its culinary scene.",
+        stops: [
+            "Schlossberg & Clock Tower",
+            "Old Town Graz",
+            "Kunsthaus Graz",
+            "Murinsel"],
+        coordinates: [47.0707, 15.4395],
+        recommendedNext: [
+            ["Vienna", 2.5],
+            ["Ljubljana", 3],
+            ["Trieste", 4],
+            ["Vienna", 5],
+            ["Bled", 3]
+        ],
+        stayLength: "1-2"
+    },
+
+    pisa: {
+        name: "Pisa",
+        region: "Tuscany",
+        description:
+            "Famous for its iconic Leaning Tower, Pisa offers a mix of history and culture.",
+        stops: [
+            "Leaning Tower of Pisa",
+            "Piazza dei Miracoli",
+            "Pisa Cathedral",
+            "Borgo Stretto & lunch"],
+        coordinates: [43.7228, 10.4017],
+        recommendedNext: [
+            ["Florence", 1],
+            ["Rome", 2],
+            ["Bologna", 2],
+            ["Venice", 3]
+        ],
+        stayLength: "1"
     }
 
 };
 
-
-const interests = {
-
-    history: "🏛️ History",
-    art: "🎨 Art & Architecture",
-    food: "🍝 Food",
-    scenery: "🏔️ Scenery",
-    shopping: "🛍️ Shopping"
-
-};
 
 
 /*
@@ -651,6 +1070,366 @@ Create city checkboxes.
 */
 
 const cityList = document.getElementById("city-list");
+const cityDetails = document.getElementById("city-details");
+const daysSelect = document.getElementById("days");
+const routeStays = document.getElementById("route-stays");
+const routeSlots = document.getElementById("route-slots");
+const addDestinationButton = document.getElementById("add-destination");
+let routeVisits = [];
+let citySelectedBeforeActivation = null;
+let nextVisitId = 0;
+const stayDaysByVisit = {};
+
+function createRouteVisit(cityId) {
+    return {
+        id: `visit-${nextVisitId++}`,
+        cityId
+    };
+}
+
+function updateAddDestinationButton() {
+    const selectedCityId = cityList.querySelector("input:checked")?.value;
+    const lastRouteCityId = routeVisits.at(-1)?.cityId;
+    addDestinationButton.disabled = !selectedCityId ||
+        selectedCityId === lastRouteCityId ||
+        routeVisits.length >= Number(daysSelect.value);
+}
+
+function normalizeRouteVisits() {
+    let previousCityId = null;
+    routeVisits = routeVisits.filter(visit => {
+        if (visit.cityId === previousCityId) {
+            return false;
+        }
+        previousCityId = visit.cityId;
+        return true;
+    });
+
+}
+
+function renderRouteSlots() {
+    const numberOfDays = Number(daysSelect.value);
+    const route = routeVisits.slice(0, numberOfDays);
+
+    routeStays.replaceChildren();
+    routeSlots.replaceChildren();
+
+    let remainingDays = numberOfDays;
+
+    route.forEach(({ id: visitId, cityId }, index) => {
+        const city = cities[cityId];
+        const recommendedMinimum = Number.parseInt(city.stayLength, 10) || 1;
+        const daysReservedForLaterCities = route.length - index - 1;
+        const maxStay = Math.max(1, remainingDays - daysReservedForLaterCities);
+        const stayDays = Math.min(
+            Math.max(1, stayDaysByVisit[visitId] ?? recommendedMinimum),
+            maxStay
+        );
+        stayDaysByVisit[visitId] = stayDays;
+        remainingDays -= stayDays;
+
+        const stayRow = document.createElement("div");
+        stayRow.className = "route-stay";
+
+        const cityInfo = document.createElement("div");
+        cityInfo.className = "route-stay-info";
+
+        const cityName = document.createElement("strong");
+        cityName.textContent = city.name;
+
+        const recommendation = document.createElement("span");
+        recommendation.className = "route-stay-recommendation";
+        const stayUnit = city.stayLength === "1" ? "day" : "days";
+        recommendation.textContent = `Recommended stay: ${city.stayLength} ${stayUnit}`;
+        cityInfo.append(cityName, recommendation);
+
+        const stayLabel = document.createElement("label");
+        stayLabel.className = "stay-control";
+        stayLabel.textContent = "Stay";
+
+        const staySelect = document.createElement("select");
+        staySelect.setAttribute("aria-label", `Stay length in ${city.name}`);
+        for (let days = 1; days <= maxStay; days++) {
+            const option = document.createElement("option");
+            option.value = String(days);
+            option.textContent = `${days} ${days === 1 ? "day" : "days"}`;
+            option.selected = days === stayDays;
+            staySelect.appendChild(option);
+        }
+        staySelect.addEventListener("change", () => {
+            stayDaysByVisit[visitId] = Number(staySelect.value);
+            renderRouteSlots();
+        });
+        stayLabel.appendChild(staySelect);
+
+        const stayActions = document.createElement("div");
+        stayActions.className = "route-stay-actions";
+
+        const removeButton = document.createElement("button");
+        removeButton.type = "button";
+        removeButton.className = "remove-city";
+        removeButton.textContent = "×";
+        removeButton.setAttribute("aria-label", `Remove ${city.name} from route`);
+        removeButton.title = `Remove ${city.name} from route`;
+        removeButton.addEventListener("click", () => {
+            routeVisits = routeVisits.filter(visit => visit.id !== visitId);
+            normalizeRouteVisits();
+            renderRouteSlots();
+            updateCityMap(cityId, true);
+        });
+        stayActions.appendChild(removeButton);
+
+        stayActions.appendChild(stayLabel);
+        stayRow.append(cityInfo, stayActions);
+        routeStays.appendChild(stayRow);
+    });
+
+    const dayRoute = route.flatMap(({ id: visitId, cityId }) =>
+        Array(stayDaysByVisit[visitId]).fill(cityId)
+    );
+
+    for (let index = 0; index < numberOfDays; index++) {
+        const cityId = dayRoute[index];
+        const previousCityId = dayRoute[index - 1];
+
+        if (index > 0 && cityId && previousCityId && cityId !== previousCityId) {
+            const travelEntry = (cities[previousCityId].recommendedNext || [])
+                .find(([name]) => cityIdForName(name) === cityId);
+            const travel = document.createElement("div");
+            travel.className = "route-travel";
+            travel.setAttribute("role", "note");
+            travel.textContent = travelEntry
+                ? `Travel time: ${travelEntry[1]} ${travelEntry[1] === 1 ? "hour" : "hours"}`
+                : "Travel time: unknown";
+            routeSlots.appendChild(travel);
+        }
+
+        const slot = document.createElement("div");
+        slot.className = cityId ? "route-slot" : "route-slot route-slot-empty";
+        slot.setAttribute("role", "listitem");
+
+        const dayLabel = document.createElement("span");
+        dayLabel.className = "route-slot-day";
+        dayLabel.textContent = `Day ${index + 1}`;
+
+        const destination = document.createElement("strong");
+        destination.textContent = cityId
+            ? cities[cityId].name
+            : "Add a destination or stay day";
+
+        slot.append(dayLabel, destination);
+        routeSlots.appendChild(slot);
+    }
+
+    updateAddDestinationButton();
+}
+
+daysSelect.addEventListener("change", renderRouteSlots);
+
+const cityMap = L.map("city-map").setView([43.5, 9.5], 4.5);
+
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 19
+}).addTo(cityMap);
+
+const cityMarkers = {};
+
+for (const [id, city] of Object.entries(cities)) {
+    cityMarkers[id] = L.circleMarker(city.coordinates, {
+        radius: 6,
+        color: "#fff",
+        weight: 2,
+        fillColor: "#858b88",
+        fillOpacity: 0.65
+    }).addTo(cityMap).bindTooltip(city.name);
+}
+
+const recommendedEdgeMarkers = L.layerGroup().addTo(cityMap);
+let offscreenRecommendedCityIds = new Set();
+
+const allCityBounds = L.latLngBounds(
+    Object.values(cities).map(city => city.coordinates)
+).pad(0.1);
+
+cityMap.fitBounds(allCityBounds);
+
+function updateCityDetails(cityId) {
+    cityDetails.replaceChildren();
+
+    if (!cityId) {
+        const emptyMessage = document.createElement("p");
+        emptyMessage.textContent = "Select a city to see its description and stops.";
+        cityDetails.appendChild(emptyMessage);
+        return;
+    }
+
+    const city = cities[cityId];
+    const heading = document.createElement("h3");
+    heading.textContent = city.name;
+
+    const description = document.createElement("p");
+    description.textContent = city.description;
+
+    const stayLength = document.createElement("p");
+    const dayUnit = city.stayLength === "1" ? "day" : "days";
+    stayLength.textContent = `Suggested stay: ${city.stayLength} ${dayUnit}`;
+
+    const stopsHeading = document.createElement("h4");
+    stopsHeading.textContent = "Stops";
+
+    const stopsList = document.createElement("ul");
+    for (const stop of city.stops) {
+        const item = document.createElement("li");
+        item.textContent = Array.isArray(stop) ? stop.join(" - ") : stop;
+        stopsList.appendChild(item);
+    }
+
+    cityDetails.append(heading, description, stayLength, stopsHeading, stopsList);
+}
+
+function cityIdForName(name) {
+    const normalize = value => value.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const normalizedName = normalize(name);
+
+    return Object.entries(cities).find(([id, city]) =>
+        normalize(id) === normalizedName || normalize(city.name) === normalizedName
+    )?.[0];
+}
+
+function refreshRecommendedEdgeMarkers() {
+    recommendedEdgeMarkers.clearLayers();
+    if (offscreenRecommendedCityIds.size === 0) {
+        return;
+    }
+
+    const bounds = cityMap.getBounds();
+    const size = cityMap.getSize();
+    if (size.x === 0 || size.y === 0) {
+        return;
+    }
+
+    const center = L.point(size.x / 2, size.y / 2);
+    const horizontalInset = 66;
+    const verticalInset = 18;
+    const placedPositions = [];
+
+    for (const cityId of offscreenRecommendedCityIds) {
+        const city = cities[cityId];
+        if (bounds.contains(city.coordinates)) {
+            continue;
+        }
+
+        const point = cityMap.latLngToContainerPoint(city.coordinates);
+        const deltaX = point.x - center.x;
+        const deltaY = point.y - center.y;
+        const scaleX = deltaX > 0
+            ? (size.x - horizontalInset - center.x) / deltaX
+            : deltaX < 0
+                ? (horizontalInset - center.x) / deltaX
+                : Infinity;
+        const scaleY = deltaY > 0
+            ? (size.y - verticalInset - center.y) / deltaY
+            : deltaY < 0
+                ? (verticalInset - center.y) / deltaY
+                : Infinity;
+        const scale = Math.min(scaleX, scaleY);
+        const edgeX = center.x + deltaX * scale;
+        let edgeY = center.y + deltaY * scale;
+
+        for (let attempt = 0; attempt < Math.ceil(size.y / 30); attempt++) {
+            const overlaps = placedPositions.some(position =>
+                Math.abs(position.x - edgeX) < 118 && Math.abs(position.y - edgeY) < 28
+            );
+            if (!overlaps) {
+                break;
+            }
+            edgeY += 30;
+            if (edgeY > size.y - verticalInset) {
+                edgeY = verticalInset;
+            }
+        }
+        placedPositions.push({ x: edgeX, y: edgeY });
+
+        const angle = Math.atan2(deltaY, deltaX) * 180 / Math.PI + 90;
+        const label = document.createElement("div");
+        label.className = "recommended-edge-label";
+
+        const arrow = document.createElement("span");
+        arrow.className = "recommended-edge-arrow";
+        arrow.textContent = "▲";
+        arrow.style.transform = `rotate(${angle}deg)`;
+
+        const name = document.createElement("span");
+        name.className = "recommended-edge-name";
+        name.textContent = city.name;
+
+        label.append(arrow, name);
+        const icon = L.divIcon({
+            className: "recommended-edge-icon",
+            html: label,
+            iconSize: [120, 26],
+            iconAnchor: [60, 13]
+        });
+        L.marker(cityMap.containerPointToLatLng([edgeX, edgeY]), {
+            icon,
+            keyboard: false,
+            zIndexOffset: 1000
+        }).addTo(recommendedEdgeMarkers).bindTooltip(city.name);
+    }
+}
+
+cityMap.on("moveend zoomend resize", refreshRecommendedEdgeMarkers);
+
+function updateCityMap(preferredCityId, resetToAllCities = false, keepCurrentView = false) {
+    const selectedCityId = cityList.querySelector("input:checked")?.value;
+    const selected = new Set(selectedCityId ? [selectedCityId] : []);
+    const routeCityIds = new Set(routeVisits.map(visit => visit.cityId));
+
+    const activeCityId = selected.has(preferredCityId)
+        ? preferredCityId
+        : selectedCityId || routeVisits.at(-1)?.cityId;
+    const recommendedCityIds = new Set(
+        (cities[activeCityId]?.recommendedNext || [])
+            .map(([name]) => cityIdForName(name))
+            .filter(Boolean)
+    );
+    const offscreenRecommendations = new Set();
+
+    for (const [id, marker] of Object.entries(cityMarkers)) {
+        const isSelected = selected.has(id) || routeCityIds.has(id);
+        const isRecommended = !isSelected && recommendedCityIds.has(id);
+        if (isRecommended) {
+            offscreenRecommendations.add(id);
+        }
+        marker.setStyle({
+            radius: isSelected ? 10 : isRecommended ? 8 : 6,
+            fillColor: isSelected ? "#147a4b" : isRecommended ? "#d97706" : "#858b88",
+            fillOpacity: isSelected || isRecommended ? 1 : 0.55
+        });
+    }
+
+    offscreenRecommendedCityIds = offscreenRecommendations;
+    updateCityDetails(activeCityId);
+    refreshRecommendedEdgeMarkers();
+
+    if (keepCurrentView) {
+        return;
+    }
+
+    const selectedCoordinates = [...selected]
+        .map(id => cities[id].coordinates);
+
+    if (resetToAllCities || selectedCoordinates.length === 0) {
+        cityMap.fitBounds(allCityBounds);
+    } else if (selectedCoordinates.length === 1) {
+        cityMap.setView(selectedCoordinates[0], 6);
+    } else {
+        cityMap.fitBounds(L.latLngBounds(selectedCoordinates).pad(0.2), {
+            maxZoom: 6
+        });
+    }
+}
 
 for (const [id, city] of Object.entries(cities)) {
 
@@ -659,7 +1438,7 @@ for (const [id, city] of Object.entries(cities)) {
     wrapper.className = "city-option";
 
     wrapper.innerHTML = `
-        <input type="checkbox" id="city-${id}" value="${id}">
+        <input type="radio" name="city-destination" id="city-${id}" value="${id}">
         <label for="city-${id}">
             <span class="city-name">${city.name}</span>
             <span class="city-region">${city.region}</span>
@@ -668,6 +1447,65 @@ for (const [id, city] of Object.entries(cities)) {
 
     cityList.appendChild(wrapper);
 }
+
+cityList.addEventListener("change", event => {
+    updateCityMap(event.target.value);
+    updateAddDestinationButton();
+});
+
+cityList.addEventListener("pointerdown", event => {
+    const radio = event.target.closest(".city-option")
+        ?.querySelector('input[type="radio"]');
+    citySelectedBeforeActivation = radio?.checked ? radio.value : null;
+});
+
+cityList.addEventListener("keydown", event => {
+    if (event.key !== " " && event.code !== "Space") {
+        return;
+    }
+
+    const radio = event.target.closest('input[type="radio"]');
+    citySelectedBeforeActivation = radio?.checked ? radio.value : null;
+});
+
+cityList.addEventListener("click", event => {
+    const radio = event.target.closest(".city-option")
+        ?.querySelector('input[type="radio"]');
+    if (!radio || radio.value !== citySelectedBeforeActivation) {
+        citySelectedBeforeActivation = null;
+        return;
+    }
+
+    const deselectedCityId = radio.value;
+    window.setTimeout(() => {
+        if (citySelectedBeforeActivation !== deselectedCityId) {
+            return;
+        }
+
+        radio.checked = false;
+        citySelectedBeforeActivation = null;
+        updateCityMap(undefined, true);
+        updateAddDestinationButton();
+    }, 0);
+});
+
+addDestinationButton.addEventListener("click", () => {
+    const selectedCityId = cityList.querySelector("input:checked")?.value;
+    if (!selectedCityId || routeVisits.at(-1)?.cityId === selectedCityId) {
+        return;
+    }
+    if (routeVisits.length >= Number(daysSelect.value)) {
+        return;
+    }
+
+    routeVisits.push(createRouteVisit(selectedCityId));
+    normalizeRouteVisits();
+    renderRouteSlots();
+    updateCityMap(selectedCityId);
+});
+
+updateCityMap(undefined, false, true);
+renderRouteSlots();
 
 
 /*
@@ -696,18 +1534,25 @@ Select recommended cities.
 */
 
 document.getElementById("recommended").addEventListener("click", () => {
+    const sourceCityId = routeVisits[0]?.cityId;
+    if (!sourceCityId) {
+        return;
+    }
 
-    const home = document.getElementById("home").value;
-
-    const recommended =
-        recommendations[home] || [];
+    const recommended = recommendations[sourceCityId] || [];
+    const selectedCityIds = new Set([sourceCityId, ...recommended]);
 
     document
         .querySelectorAll("#city-list input")
         .forEach(input => {
-            input.checked =
-                recommended.includes(input.value);
+            input.checked = selectedCityIds.has(input.value);
         });
+
+    routeVisits = [sourceCityId, ...recommended]
+        .filter((cityId, index, cityIds) => cityIds.indexOf(cityId) === index)
+        .map(createRouteVisit);
+    renderRouteSlots();
+    updateCityMap();
 
 });
 
@@ -717,16 +1562,11 @@ Build the itinerary.
 */
 
 document.getElementById("build").addEventListener("click", () => {
-
-    const home =
-        document.getElementById("home").value;
-
     const numberOfDays =
         Number(document.getElementById("days").value);
 
     const selectedCities =
-        [...document.querySelectorAll("#city-list input:checked")]
-            .map(input => input.value);
+        [...new Set(routeVisits.map(visit => visit.cityId))];
 
     const selectedInterests =
         [...document.querySelectorAll("#interest-list input:checked")]
@@ -746,44 +1586,6 @@ document.getElementById("build").addEventListener("click", () => {
     }
 
     error.textContent = "";
-
-
-    /*
-    Rank destinations according to the user's interests.
-    */
-
-    const rankedCities =
-        selectedCities
-            .map(id => ({
-                id,
-                score:
-                    cities[id].tags
-                        .filter(tag =>
-                            selectedInterests.includes(tag)
-                        ).length
-            }))
-            .sort((a, b) => b.score - a.score);
-
-
-    /*
-    Turn ranked cities into an itinerary.
-
-    For now, cities repeat if the trip is longer
-    than the number of selected destinations.
-    */
-
-    const itinerary = [];
-
-    for (let i = 0; i < numberOfDays; i++) {
-
-        const destination =
-            rankedCities[i % rankedCities.length];
-
-        itinerary.push(
-            cities[destination.id]
-        );
-
-    }
 
 
     /*
@@ -899,11 +1701,10 @@ document.getElementById("build").addEventListener("click", () => {
 
     document.getElementById("itinerary-title")
         .textContent =
-            `${numberOfDays}-Day Italy Adventure`;
+            `${numberOfDays}-Day European Adventure`;
 
     document.getElementById("itinerary-summary")
         .textContent =
-            `Starting from ${cities[home].name} · ` +
             `${selectedCities.length} destinations selected`;
 
 
