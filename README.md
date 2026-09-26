@@ -1,2 +1,5 @@
-# JoshComeToItaly.github.io
-A simple tool to let my friend choose his itenerary in Italy
+# Hello Goobie 
+
+Welcome to my little itinerary builder for your trip to Italy
+
+
