@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Italy Trip Planner</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #f5f3ef;
+        color: #242424;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 32px 20px 60px;
+    }
+
+    header {
+        text-align: center;
+        margin-bottom: 35px;
+    }
+
+    header .flag {
+        font-size: 42px;
+    }
+
+    h1 {
+        margin: 8px 0;
+        font-size: clamp(32px, 6vw, 52px);
+    }
+
+    header p {
+        color: #666;
+        font-size: 17px;
+    }
+
+    .card {
+        background: white;
+        border-radius: 18px;
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,.06);
+    }
+
+    h2 {
+        margin-top: 0;
+        font-size: 21px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+    }
+
+    label.field {
+        display: block;
+        font-weight: 600;
+    }
+
+    select {
+        width: 100%;
+        margin-top: 8px;
+        padding: 13px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background: white;
+    }
+
+    .city-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 10px;
+    }
+
+    .city-option {
+        position: relative;
+    }
+
+    .city-option input {
+        position: absolute;
+        opacity: 0;
+    }
+
+    .city-option label {
+        display: block;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: .15s;
+        background: #fff;
+    }
+
+    .city-option label:hover {
+        border-color: #999;
+    }
+
+    .city-option input:checked + label {
+        border-color: #147a4b;
+        background: #eaf6ef;
+    }
+
+    .city-name {
+        font-weight: 700;
+        display: block;
+    }
+
+    .city-region {
+        display: block;
+        margin-top: 4px;
+        color: #777;
+        font-size: 13px;
+    }
+
+    .interest-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .interest {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 10px 14px;
+        border: 1px solid #ddd;
+        border-radius: 100px;
+        cursor: pointer;
+        background: white;
+    }
+
+    .interest:has(input:checked) {
+        background: #eaf6ef;
+        border-color: #147a4b;
+    }
+
+    button {
+        border: 0;
+        cursor: pointer;
+        font: inherit;
+    }
+
+    .primary {
+        width: 100%;
+        padding: 16px;
+        border-radius: 12px;
+        background: #147a4b;
+        color: white;
+        font-weight: 700;
+        font-size: 17px;
+        margin-top: 10px;
+    }
+
+    .primary:hover {
+        background: #0f633d;
+    }
+
+    .secondary {
+        padding: 8px 12px;
+        background: transparent;
+        color: #147a4b;
+        text-decoration: underline;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .error {
+        color: #a33;
+        margin-top: 12px;
+        font-size: 14px;
+    }
+
+    /* Itinerary */
+
+    #itinerary {
+        display: none;
+    }
+
+    .itinerary-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .day {
+        border: 1px solid #ddd;
+        border-radius: 16px;
+        overflow: hidden;
+        margin-bottom: 16px;
+    }
+
+    .day-header {
+        padding: 18px;
+        background: #fafafa;
+        border-bottom: 1px solid #ddd;
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+    }
+
+    .day-number {
+        color: #147a4b;
+        font-size: 13px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+    }
+
+    .day-title {
+        margin: 3px 0 0;
+        font-size: 22px;
+    }
+
+    .region {
+        font-size: 12px;
+        background: #eaf6ef;
+        padding: 7px 10px;
+        border-radius: 20px;
+        height: fit-content;
+    }
+
+    .day-description {
+        padding: 15px 18px 5px;
+        color: #666;
+    }
+
+    .stop {
+        display: flex;
+        gap: 14px;
+        padding: 15px 18px;
+        border-top: 1px solid #eee;
+    }
+
+    .stop-number {
+        width: 28px;
+        height: 28px;
+        min-width: 28px;
+        border-radius: 50%;
+        background: #eaf6ef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: #147a4b;
+    }
+
+    .stop-content strong {
+        display: block;
+        margin-bottom: 3px;
+    }
+
+    .time {
+        color: #888;
+        font-size: 13px;
+    }
+
+    .travel {
+        padding: 10px 18px;
+        color: #777;
+        background: #fafafa;
+        font-size: 13px;
+        border-top: 1px dashed #ddd;
+    }
+
+    .print-button {
+        padding: 10px 15px;
+        border: 1px solid #ccc;
+        border-radius: 9px;
+        background: white;
+    }
+
+    @media (max-width: 650px) {
+        .container {
+            padding: 22px 14px 40px;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .card {
+            padding: 18px;
+        }
+
+        .itinerary-header {
+            flex-direction: column;
+        }
+    }
+
+    @media print {
+        body {
+            background: white;
+        }
+
+        .setup,
+        header {
+            display: none;
+        }
+
+        .container {
+            max-width: none;
+        }
+
+        #itinerary {
+            display: block !important;
+        }
+
+        .day {
+            break-inside: avoid;
+        }
+
+        .print-button {
+            display: none;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+    <div class="flag">🇮🇹</div>
+    <h1>Italy Trip Planner</h1>
+    <p>Build a personalized itinerary for your Italian adventure.</p>
+</header>
+
+<div class="setup">
+
+    <div class="card">
+        <h2>1. Tell me about the trip</h2>
+
+        <div class="form-grid">
+
+            <label class="field">
+                Starting from
+                <select id="home">
+                    <option value="trieste">Trieste</option>
+                    <option value="venice">Venice</option>
+                    <option value="milan">Milan</option>
+                    <option value="bologna">Bologna</option>
+                    <option value="florence">Florence</option>
+                    <option value="rome">Rome</option>
+                </select>
+            </label>
+
+            <label class="field">
+                Number of days
+                <select id="days">
+                    <option value="2">2 days</option>
+                    <option value="3">3 days</option>
+                    <option value="4" selected>4 days</option>
+                    <option value="5">5 days</option>
+                    <option value="6">6 days</option>
+                    <option value="7">7 days</option>
+                    <option value="8">8 days</option>
+                    <option value="9">9 days</option>
+                    <option value="10">10 days</option>
+                </select>
+            </label>
+
+        </div>
+    </div>
+
+
+    <div class="card">
+
+        <div class="section-header">
+            <div>
+                <h2 style="margin-bottom:4px;">2. Where would you like to go?</h2>
+                <div style="color:#777;font-size:14px;">
+                    Select as many destinations as you'd like.
+                </div>
+            </div>
+
+            <button class="secondary" id="recommended">
+                Select recommended
+            </button>
+        </div>
+
+        <br>
+
+        <div class="city-grid" id="city-list"></div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>3. What do you enjoy?</h2>
+
+        <div class="interest-list" id="interest-list"></div>
+
+    </div>
+
+
+    <div class="card">
+
+        <button class="primary" id="build">
+            ✨ Build My Itinerary
+        </button>
+
+        <div id="error" class="error"></div>
+
+    </div>
+
+</div>
+
+
+<div id="itinerary">
+
+    <div class="card">
+
+        <div class="itinerary-header">
+
+            <div>
+                <div style="color:#147a4b;font-size:13px;font-weight:bold;">
+                    YOUR ITALIAN ADVENTURE
+                </div>
+
+                <h2 id="itinerary-title" style="font-size:30px;margin:5px 0;">
+                    Your itinerary
+                </h2>
+
+                <div id="itinerary-summary" style="color:#777;"></div>
+            </div>
+
+            <button class="print-button" onclick="window.print()">
+                🖨️ Print / Save PDF
+            </button>
+
+        </div>
+
+        <div id="days-container"></div>
+
+    </div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/*
+=========================================================
+ITALY TRIP PLANNER
+Everything is contained in this file.
+
+To add a city:
+1. Add an entry to the "cities" object.
+2. Give it stops, tags, region, etc.
+
+No backend or external libraries are required.
+=========================================================
+*/
+
+
+const cities = {
+
+    trieste: {
+        name: "Trieste",
+        region: "Friuli-Venezia Giulia",
+        tags: ["history", "food", "scenery"],
+        description:
+            "A beautiful port city with Austro-Hungarian architecture, excellent coffee and a relaxed Mediterranean atmosphere.",
+        stops: [
+            ["Piazza Unità d’Italia", "Morning"],
+            ["Canal Grande", "Late morning"],
+            ["Caffè historic coffee stop", "Lunch"],
+            ["San Giusto Castle & Cathedral", "Afternoon"],
+            ["Sunset along the waterfront", "Evening"]
+        ]
+    },
+
+    venice: {
+        name: "Venice",
+        region: "Veneto",
+        tags: ["history", "food", "scenery", "art"],
+        description:
+            "Spend the day getting lost among canals, bridges and historic neighborhoods.",
+        stops: [
+            ["St. Mark’s Square", "Morning"],
+            ["Doge’s Palace", "Late morning"],
+            ["Rialto Market & lunch", "Lunch"],
+            ["Dorsoduro", "Afternoon"],
+            ["Cannaregio", "Evening"]
+        ]
+    },
+
+    ljubljana: {
+        name: "Ljubljana",
+        region: "Slovenia",
+        tags: ["history", "food", "scenery"],
+        description:
+            "A compact and charming city that is easy to explore on foot.",
+        stops: [
+            ["Ljubljana Old Town", "Morning"],
+            ["Central Market", "Late morning"],
+            ["Lunch beside the river", "Lunch"],
+            ["Ljubljana Castle", "Afternoon"],
+            ["Riverfront cafés", "Evening"]
+        ]
+    },
+
+    bled: {
+        name: "Lake Bled",
+        region: "Slovenia",
+        tags: ["scenery"],
+        description:
+            "A spectacular alpine lake that makes an excellent day trip.",
+        stops: [
+            ["Walk around Lake Bled", "Morning"],
+            ["Bled Island", "Late morning"],
+            ["Traditional cream cake & lunch", "Lunch"],
+            ["Bled Castle", "Afternoon"],
+            ["Lake viewpoint", "Evening"]
+        ]
+    },
+
+    verona: {
+        name: "Verona",
+        region: "Veneto",
+        tags: ["history", "food", "scenery", "art"],
+        description:
+            "A beautiful historic center with Roman architecture, piazzas and excellent restaurants.",
+        stops: [
+            ["Verona Arena", "Morning"],
+            ["Piazza delle Erbe", "Late morning"],
+            ["Lunch in the historic center", "Lunch"],
+            ["Castelvecchio", "Afternoon"],
+            ["Ponte Pietra & evening aperitivo", "Evening"]
+        ]
+    },
+
+    bologna: {
+        name: "Bologna",
+        region: "Emilia-Romagna",
+        tags: ["food", "history", "art"],
+        description:
+            "One of Italy's great food cities, famous for its porticoes and medieval center.",
+        stops: [
+            ["Piazza Maggiore", "Morning"],
+            ["Two Towers", "Late morning"],
+            ["Quadrilatero food market", "Lunch"],
+            ["Santo Stefano", "Afternoon"],
+            ["Traditional Bolognese dinner", "Evening"]
+        ]
+    },
+
+    florence: {
+        name: "Florence",
+        region: "Tuscany",
+        tags: ["history", "art", "food", "scenery"],
+        description:
+            "The heart of Renaissance Italy, packed with extraordinary art and architecture.",
+        stops: [
+            ["Florence Cathedral", "Morning"],
+            ["Piazza della Signoria", "Late morning"],
+            ["Central Market", "Lunch"],
+            ["Uffizi / Renaissance art", "Afternoon"],
+            ["Ponte Vecchio & Oltrarno", "Evening"]
+        ]
+    },
+
+    milan: {
+        name: "Milan",
+        region: "Lombardy",
+        tags: ["art", "food", "shopping", "history"],
+        description:
+            "Italy's modern capital of design, fashion and business, with a fascinating historic center.",
+        stops: [
+            ["Milan Cathedral", "Morning"],
+            ["Galleria Vittorio Emanuele II", "Late morning"],
+            ["Brera", "Lunch"],
+            ["Sforza Castle", "Afternoon"],
+            ["Navigli aperitivo", "Evening"]
+        ]
+    },
+
+    rome: {
+        name: "Rome",
+        region: "Lazio",
+        tags: ["history", "art", "food"],
+        description:
+            "Ancient ruins, Renaissance masterpieces and some of Italy's best food.",
+        stops: [
+            ["Colosseum", "Morning"],
+            ["Roman Forum", "Late morning"],
+            ["Pantheon & lunch", "Lunch"],
+            ["Trevi Fountain", "Afternoon"],
+            ["Trastevere", "Evening"]
+        ]
+    }
+
+};
+
+
+const interests = {
+
+    history: "🏛️ History",
+    art: "🎨 Art & Architecture",
+    food: "🍝 Food",
+    scenery: "🏔️ Scenery",
+    shopping: "🛍️ Shopping"
+
+};
+
+
+/*
+Recommended destinations depending on starting point.
+*/
+
+const recommendations = {
+
+    trieste: ["venice", "ljubljana", "bled", "verona"],
+
+    venice: ["verona", "bologna", "florence"],
+
+    milan: ["verona", "bologna", "florence"],
+
+    bologna: ["florence", "verona", "venice"],
+
+    florence: ["bologna", "rome", "venice"],
+
+    rome: ["florence", "bologna", "venice"]
+
+};
+
+
+/*
+Create city checkboxes.
+*/
+
+const cityList = document.getElementById("city-list");
+
+for (const [id, city] of Object.entries(cities)) {
+
+    const wrapper = document.createElement("div");
+
+    wrapper.className = "city-option";
+
+    wrapper.innerHTML = `
+        <input type="checkbox" id="city-${id}" value="${id}">
+        <label for="city-${id}">
+            <span class="city-name">${city.name}</span>
+            <span class="city-region">${city.region}</span>
+        </label>
+    `;
+
+    cityList.appendChild(wrapper);
+}
+
+
+/*
+Create interest checkboxes.
+*/
+
+const interestList = document.getElementById("interest-list");
+
+for (const [id, name] of Object.entries(interests)) {
+
+    const label = document.createElement("label");
+
+    label.className = "interest";
+
+    label.innerHTML = `
+        <input type="checkbox" value="${id}">
+        ${name}
+    `;
+
+    interestList.appendChild(label);
+}
+
+
+/*
+Select recommended cities.
+*/
+
+document.getElementById("recommended").addEventListener("click", () => {
+
+    const home = document.getElementById("home").value;
+
+    const recommended =
+        recommendations[home] || [];
+
+    document
+        .querySelectorAll("#city-list input")
+        .forEach(input => {
+            input.checked =
+                recommended.includes(input.value);
+        });
+
+});
+
+
+/*
+Build the itinerary.
+*/
+
+document.getElementById("build").addEventListener("click", () => {
+
+    const home =
+        document.getElementById("home").value;
+
+    const numberOfDays =
+        Number(document.getElementById("days").value);
+
+    const selectedCities =
+        [...document.querySelectorAll("#city-list input:checked")]
+            .map(input => input.value);
+
+    const selectedInterests =
+        [...document.querySelectorAll("#interest-list input:checked")]
+            .map(input => input.value);
+
+    const error =
+        document.getElementById("error");
+
+
+    if (selectedCities.length === 0) {
+
+        error.textContent =
+            "Please select at least one destination.";
+
+        return;
+
+    }
+
+    error.textContent = "";
+
+
+    /*
+    Rank destinations according to the user's interests.
+    */
+
+    const rankedCities =
+        selectedCities
+            .map(id => ({
+                id,
+                score:
+                    cities[id].tags
+                        .filter(tag =>
+                            selectedInterests.includes(tag)
+                        ).length
+            }))
+            .sort((a, b) => b.score - a.score);
+
+
+    /*
+    Turn ranked cities into an itinerary.
+
+    For now, cities repeat if the trip is longer
+    than the number of selected destinations.
+    */
+
+    const itinerary = [];
+
+    for (let i = 0; i < numberOfDays; i++) {
+
+        const destination =
+            rankedCities[i % rankedCities.length];
+
+        itinerary.push(
+            cities[destination.id]
+        );
+
+    }
+
+
+    /*
+    Display itinerary.
+    */
+
+    const container =
+        document.getElementById("days-container");
+
+    container.innerHTML = "";
+
+
+    itinerary.forEach((city, index) => {
+
+        const day =
+            document.createElement("div");
+
+        day.className = "day";
+
+
+        const stops =
+            city.stops
+                .map((stop, stopIndex) => {
+
+                    return `
+                        <div class="stop">
+
+                            <div class="stop-number">
+                                ${stopIndex + 1}
+                            </div>
+
+                            <div class="stop-content">
+
+                                <strong>
+                                    ${stop[0]}
+                                </strong>
+
+                                <span class="time">
+                                    ${stop[1]}
+                                </span>
+
+                            </div>
+
+                        </div>
+                    `;
+
+                })
+                .join("");
+
+
+        /*
+        Add a simple travel indication
+        between different cities.
+        */
+
+        let travel = "";
+
+        if (index > 0 &&
+            itinerary[index - 1].name !== city.name) {
+
+            travel = `
+                <div class="travel">
+                    🚆 Travel from
+                    ${itinerary[index - 1].name}
+                    to ${city.name}
+                </div>
+            `;
+
+        }
+
+
+        day.innerHTML = `
+
+            <div class="day-header">
+
+                <div>
+
+                    <div class="day-number">
+                        Day ${index + 1}
+                    </div>
+
+                    <h3 class="day-title">
+                        ${city.name}
+                    </h3>
+
+                </div>
+
+                <div class="region">
+                    ${city.region}
+                </div>
+
+            </div>
+
+            ${travel}
+
+            <div class="day-description">
+                ${city.description}
+            </div>
+
+            ${stops}
+
+        `;
+
+
+        container.appendChild(day);
+
+    });
+
+
+    /*
+    Update summary.
+    */
+
+    document.getElementById("itinerary-title")
+        .textContent =
+            `${numberOfDays}-Day Italy Adventure`;
+
+    document.getElementById("itinerary-summary")
+        .textContent =
+            `Starting from ${cities[home].name} · ` +
+            `${selectedCities.length} destinations selected`;
+
+
+    document.getElementById("itinerary")
+        .style.display = "block";
+
+
+    /*
+    Scroll down to itinerary.
+    */
+
+    document.getElementById("itinerary")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
+
+});
+
+
+/*
+Automatically select recommended destinations
+when the page first loads.
+*/
+
+document.getElementById("recommended").click();
+
+</script>
+
+</body>
+</html>
