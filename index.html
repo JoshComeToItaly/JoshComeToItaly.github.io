@@ -70,40 +70,46 @@
 
     .route-controls {
         display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 16px;
+        justify-content: center;
+        margin-bottom: 18px;
     }
 
     .route-controls .field {
         display: flex;
-        flex: 0 1 auto;
+        flex-direction: column;
         align-items: center;
         gap: 8px;
-        white-space: nowrap;
+        min-width: 180px;
+        font-weight: 600;
     }
 
     .route-controls select {
-        width: auto;
+        width: 100%;
         min-width: 104px;
         margin-top: 0;
     }
 
+    .planner-grid {
+        display: grid;
+        grid-template-columns: minmax(280px, 1fr) minmax(300px, 1.2fr);
+        gap: 18px;
+        align-items: start;
+    }
+
+    .planner-left,
+    .planner-right {
+        display: grid;
+        gap: 18px;
+    }
+
     .reset-route {
-        flex: none;
-        margin: 0;
+        display: block;
+        margin: 10px auto 0;
         white-space: nowrap;
     }
 
     .route-stay {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        padding: 12px 14px;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        background: #fff;
+        display: none;
     }
 
     .route-stay-info {
@@ -134,6 +140,30 @@
         display: flex;
         align-items: center;
         gap: 10px;
+    }
+
+    .route-slot-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .route-slot-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px dashed #d6dad7;
+        flex-wrap: wrap;
+    }
+
+    .reset-route:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
     }
 
     .destination-actions {
@@ -566,21 +596,15 @@
     }
 
     .destination-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 18px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
     }
 
     #city-map {
         min-height: 360px;
         border-radius: 12px;
     }
-
-@media (max-width: 650px) {
-    .destination-layout {
-        grid-template-columns: 1fr;
-    }
-}
 
     @media (max-width: 650px) {
         .container {
@@ -602,35 +626,22 @@
             gap: 10px;
         }
 
-        .route-controls {
-            align-items: center;
-            flex-direction: row;
-            gap: 8px;
+        .planner-grid {
+            grid-template-columns: 1fr;
         }
 
         .route-controls .field {
             min-width: 0;
-            gap: 6px;
+            width: 100%;
         }
 
         .route-controls select {
-            min-width: 88px;
+            min-width: 0;
         }
 
         .reset-route {
             padding: 6px 8px;
             font-size: 13px;
-        }
-
-    }
-
-    @media (max-width: 360px) {
-        .route-controls {
-            flex-wrap: wrap;
-        }
-
-        .route-controls .field {
-            flex: 1 1 100%;
         }
 
         .stay-control {
@@ -700,62 +711,67 @@
 
 <div class="setup">
 
-    <div class="card">
-        <h2>Your route</h2>
-        <div class="route-controls">
-            <label class="field">
-                Number of days
-                <select id="days">
-                    <option value="2">2 days</option>
-                    <option value="3">3 days</option>
-                    <option value="4" selected>4 days</option>
-                    <option value="5">5 days</option>
-                    <option value="6">6 days</option>
-                    <option value="7">7 days</option>
-                    <option value="8">8 days</option>
-                    <option value="9">9 days</option>
-                    <option value="10">10 days</option>
-                </select>
-            </label>
-            <button class="secondary reset-route" id="reset-route" type="button">Reset route</button>
-        </div>
-        <div class="route-stays" id="route-stays"></div>
-        <div class="route-slots" id="route-slots" role="list" aria-label="Trip route"></div>
+    <div class="route-controls">
+        <label class="field">
+            Number of days
+            <select id="days">
+                <option value="2">2 days</option>
+                <option value="3">3 days</option>
+                <option value="4" selected>4 days</option>
+                <option value="5">5 days</option>
+                <option value="6">6 days</option>
+                <option value="7">7 days</option>
+                <option value="8">8 days</option>
+                <option value="9">9 days</option>
+                <option value="10">10 days</option>
+            </select>
+        </label>
     </div>
 
-
-    <div class="card">
-
-        <div class="section-header">
-            <div>
-                <h2 style="margin-bottom:4px;">Where would you like to go?</h2>
-                <div style="color:#777;font-size:14px;">
-                    Select one city, then add it to your route.
-                </div>
+    <div class="planner-grid">
+        <div class="planner-left">
+            <div class="card">
+                <h2>Your route</h2>
+                <div class="route-stays" id="route-stays"></div>
+                <div class="route-slots" id="route-slots" role="list" aria-label="Trip route"></div>
+                <button class="secondary reset-route" id="reset-route" type="button">Reset route</button>
             </div>
-            <button class="add-destination" id="add-destination" type="button" disabled>
-                Add destination
-            </button>
-        </div>
 
-        <br>
-
-        <div class="destination-layout">
-            <div class="city-grid" id="city-list"></div>
-            <div>
-                <div id="city-map" aria-label="Map of destination cities"></div>
-                <div class="map-legend" aria-label="Map marker legend">
-                    <span><i class="selected-marker"></i> Selected</span>
-                    <span><i class="recommended-marker"></i> Recommended next</span>
-                </div>
+            <div class="card">
                 <section id="city-details" class="city-details" aria-live="polite">
                     <p>Select a city to see its description and stops.</p>
                 </section>
             </div>
         </div>
 
-    </div>
+        <div class="planner-right">
+            <div class="card">
+                <div class="section-header">
+                    <div>
+                        <h2 style="margin-bottom:4px;">Where would you like to go?</h2>
+                        <div style="color:#777;font-size:14px;">
+                            Select one city, then add it to your route.
+                        </div>
+                    </div>
+                    <button class="add-destination" id="add-destination" type="button" disabled>
+                        Add destination
+                    </button>
+                </div>
 
+                <br>
+
+                <div class="city-grid" id="city-list"></div>
+            </div>
+
+            <div class="card">
+                <div id="city-map" aria-label="Map of destination cities"></div>
+                <div class="map-legend" aria-label="Map marker legend">
+                    <span><i class="selected-marker"></i> Selected</span>
+                    <span><i class="recommended-marker"></i> Recommended next</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </div>
 
@@ -1170,6 +1186,21 @@ function normalizeRouteVisits() {
 
 }
 
+function reserveStayForNewVisit(cityId) {
+    const visitId = routeVisits.at(-1)?.id;
+    if (!visitId) {
+        return;
+    }
+
+    const recommendedMinimum = Number.parseInt(cities[cityId].stayLength, 10) || 1;
+    const usedDays = routeVisits.slice(0, -1).reduce((total, visit) => {
+        return total + (stayDaysByVisit[visit.id] ?? (Number.parseInt(cities[visit.cityId].stayLength, 10) || 1));
+    }, 0);
+    const availableDays = Number(daysSelect.value) - usedDays;
+
+    stayDaysByVisit[visitId] = Math.max(1, Math.min(recommendedMinimum, availableDays));
+}
+
 function renderRouteSlots() {
     const numberOfDays = Number(daysSelect.value);
     const route = routeVisits.slice(0, numberOfDays);
@@ -1178,82 +1209,41 @@ function renderRouteSlots() {
     routeSlots.replaceChildren();
 
     let remainingDays = numberOfDays;
+    const visitMaxStay = new Map();
 
     route.forEach(({ id: visitId, cityId }, index) => {
         const city = cities[cityId];
         const recommendedMinimum = Number.parseInt(city.stayLength, 10) || 1;
         const daysReservedForLaterCities = route.length - index - 1;
         const maxStay = Math.max(1, remainingDays - daysReservedForLaterCities);
+        visitMaxStay.set(visitId, maxStay);
         const stayDays = Math.min(
             Math.max(1, stayDaysByVisit[visitId] ?? recommendedMinimum),
             maxStay
         );
         stayDaysByVisit[visitId] = stayDays;
         remainingDays -= stayDays;
-
-        const stayRow = document.createElement("div");
-        stayRow.className = "route-stay";
-
-        const cityInfo = document.createElement("div");
-        cityInfo.className = "route-stay-info";
-
-        const cityName = document.createElement("strong");
-        cityName.textContent = city.name;
-
-        const recommendation = document.createElement("span");
-        recommendation.className = "route-stay-recommendation";
-        const stayUnit = city.stayLength === "1" ? "day" : "days";
-        recommendation.textContent = `Recommended stay: ${city.stayLength} ${stayUnit}`;
-        cityInfo.append(cityName, recommendation);
-
-        const stayLabel = document.createElement("label");
-        stayLabel.className = "stay-control";
-        stayLabel.textContent = "Stay";
-
-        const staySelect = document.createElement("select");
-        staySelect.setAttribute("aria-label", `Stay length in ${city.name}`);
-        for (let days = 1; days <= maxStay; days++) {
-            const option = document.createElement("option");
-            option.value = String(days);
-            option.textContent = `${days} ${days === 1 ? "day" : "days"}`;
-            option.selected = days === stayDays;
-            staySelect.appendChild(option);
-        }
-        staySelect.addEventListener("change", () => {
-            stayDaysByVisit[visitId] = Number(staySelect.value);
-            renderRouteSlots();
-        });
-        stayLabel.appendChild(staySelect);
-
-        const stayActions = document.createElement("div");
-        stayActions.className = "route-stay-actions";
-
-        const removeButton = document.createElement("button");
-        removeButton.type = "button";
-        removeButton.className = "remove-city";
-        removeButton.textContent = "×";
-        removeButton.setAttribute("aria-label", `Remove ${city.name} from route`);
-        removeButton.title = `Remove ${city.name} from route`;
-        removeButton.addEventListener("click", () => {
-            routeVisits = routeVisits.filter(visit => visit.id !== visitId);
-            normalizeRouteVisits();
-            renderRouteSlots();
-            updateCityMap(cityId, true);
-        });
-        stayActions.appendChild(removeButton);
-
-        stayActions.appendChild(stayLabel);
-        stayRow.append(cityInfo, stayActions);
-        routeStays.appendChild(stayRow);
     });
 
     const dayRoute = route.flatMap(({ id: visitId, cityId }) =>
         Array(stayDaysByVisit[visitId]).fill(cityId)
     );
+    const dayVisitIds = [];
+    const firstIndexByVisitId = new Map();
+    route.forEach(({ id: visitId }) => {
+        if (!firstIndexByVisitId.has(visitId)) {
+            firstIndexByVisitId.set(visitId, dayVisitIds.length);
+        }
+        for (let dayIndex = 0; dayIndex < stayDaysByVisit[visitId]; dayIndex++) {
+            dayVisitIds.push(visitId);
+        }
+    });
 
     for (let index = 0; index < numberOfDays; index++) {
         const cityId = dayRoute[index];
+        const visitId = dayVisitIds[index];
         const previousCityId = dayRoute[index - 1];
+        const showControls = visitId && firstIndexByVisitId.get(visitId) === index;
 
         if (index > 0 && cityId && previousCityId && cityId !== previousCityId) {
             const travelEntry = (cities[previousCityId].recommendedNext || [])
@@ -1271,6 +1261,9 @@ function renderRouteSlots() {
         slot.className = cityId ? "route-slot" : "route-slot route-slot-empty";
         slot.setAttribute("role", "listitem");
 
+        const header = document.createElement("div");
+        header.className = "route-slot-header";
+
         const dayLabel = document.createElement("span");
         dayLabel.className = "route-slot-day";
         dayLabel.textContent = `Day ${index + 1}`;
@@ -1280,7 +1273,64 @@ function renderRouteSlots() {
             ? cities[cityId].name
             : "Add a destination or stay day";
 
-        slot.append(dayLabel, destination);
+        header.append(dayLabel, destination);
+        slot.appendChild(header);
+
+        if (cityId && showControls) {
+            const recommendation = document.createElement("div");
+            recommendation.className = "route-stay-recommendation";
+            const stayUnit = cities[cityId].stayLength === "1" ? "day" : "days";
+            recommendation.textContent = `Recommended stay: ${cities[cityId].stayLength} ${stayUnit}`;
+            slot.appendChild(recommendation);
+        }
+
+        if (cityId && showControls) {
+            const city = cities[cityId];
+            const stayLabel = document.createElement("label");
+            stayLabel.className = "stay-control";
+            stayLabel.textContent = "Stay";
+
+            const staySelect = document.createElement("select");
+            staySelect.setAttribute("aria-label", `Stay length in ${city.name}`);
+            const stayDays = stayDaysByVisit[visitId];
+            const maxStay = visitMaxStay.get(visitId) ?? 1;
+            for (let days = 1; days <= maxStay; days++) {
+                const option = document.createElement("option");
+                option.value = String(days);
+                option.textContent = `${days} ${days === 1 ? "day" : "days"}`;
+                option.selected = days === stayDays;
+                staySelect.appendChild(option);
+            }
+            staySelect.addEventListener("change", () => {
+                if (visitId) {
+                    stayDaysByVisit[visitId] = Number(staySelect.value);
+                    renderRouteSlots();
+                }
+            });
+            stayLabel.appendChild(staySelect);
+
+            const actions = document.createElement("div");
+            actions.className = "route-slot-actions";
+
+            const removeButton = document.createElement("button");
+            removeButton.type = "button";
+            removeButton.className = "remove-city";
+            removeButton.textContent = "×";
+            removeButton.setAttribute("aria-label", `Remove ${city.name} from route`);
+            removeButton.title = `Remove ${city.name} from route`;
+            removeButton.addEventListener("click", () => {
+                if (visitId) {
+                    routeVisits = routeVisits.filter(visit => visit.id !== visitId);
+                    normalizeRouteVisits();
+                    renderRouteSlots();
+                    updateCityMap(cityId, true);
+                }
+            });
+
+            actions.append(removeButton, stayLabel);
+            slot.appendChild(actions);
+        }
+
         routeSlots.appendChild(slot);
     }
 
@@ -1589,6 +1639,7 @@ addDestinationButton.addEventListener("click", () => {
 
     routeVisits.push(createRouteVisit(selectedCityId));
     normalizeRouteVisits();
+    reserveStayForNewVisit(selectedCityId);
     renderRouteSlots();
     updateCityMap(selectedCityId);
 });
