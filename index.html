@@ -832,7 +832,7 @@ const cities = {
         name: "Trieste",
         region: "Friuli-Venezia Giulia",
         description:
-            "A beautiful port city with Austro-Hungarian architecture, excellent coffee and a relaxed Mediterranean atmosphere.",
+            "Come wander our city with us. See a unique mix of Austrian and Italian archetecture, the largest sea-facing square in all of Europe, and our cats.",
         stops: [
             "Piazza Unità d’Italia",
             "Canal Grande",
@@ -847,7 +847,8 @@ const cities = {
             ["Venice", 2],
             ["Graz", 4],
             ["Vienna", 6],
-            ["Barcelona", 2]
+            ["Barcelona", 2],
+           ["Naples", 3]
         ],
         stayLength: "1-2"
     },
@@ -856,7 +857,7 @@ const cities = {
         name: "Venice",
         region: "Veneto",
         description:
-            "Spend the day getting lost among canals, bridges and historic neighborhoods.",
+            "I don't think this one needs a description. It is as wonderous as it is stinky.",
         stops: [
             "St. Mark’s Square",
             "Doge’s Palace",
@@ -869,7 +870,8 @@ const cities = {
             ["Verona", 1],
             ["Bologna", 1.5],
             ["Florence", 2.5],
-            ["Milan", 2.5]
+            ["Milan", 2.5],
+           ["Naples", 3]
         ],
         stayLength: "1-2"
     },
@@ -878,7 +880,7 @@ const cities = {
         name: "Ljubljana",
         region: "Slovenia",
         description:
-            "A compact and charming city that is easy to explore on foot.",
+            "Their medieval old town, which follows a river wripping around their castle on a forested hill, is as authentic as they come. The food is good and the views are better.",
         stops: [
             "Ljubljana Old Town",
             "Central Market",
@@ -899,7 +901,7 @@ const cities = {
         name: "Lake Bled",
         region: "Slovenia",
         description:
-            "A spectacular alpine lake that makes an excellent day trip.",
+            "A spectacular alpine lake that has been heavily recommended to us.",
         stops: [
             "Walk around Lake Bled",
             "Bled Island",
@@ -944,7 +946,7 @@ const cities = {
         name: "Bologna",
         region: "Emilia-Romagna",
         description:
-            "One of Italy's great food cities, famous for its porticoes and medieval center.",
+            "The origin of many famous Italian dishes including lasagna and what we call boloney (if you call it that, they're required to kill you). The medieval old town is supposed to be quite nice.",
         stops: [
             "Piazza Maggiore",
             "Two Towers",
@@ -968,7 +970,7 @@ const cities = {
         name: "Florence",
         region: "Tuscany",
         description:
-            "The heart of Renaissance Italy, packed with extraordinary art and architecture. Nat's family lives here, so we stay for free!",
+            "One of The Italian Cities. The some of the best art museums anywhere on the planet and fantastic food. Nat's family lives here, so we stay for free!",
         stops: [
             "Florence Cathedral",
             "Piazza della Signoria",
@@ -983,7 +985,8 @@ const cities = {
             ["Milan", 2],
             ["Verona", 1.5],
             ["Trieste", 4],
-            ["Pisa", 1]
+            ["Pisa", 1],
+           ["Naples", 2]
         ],
         stayLength: "2-3"
     },
@@ -992,7 +995,7 @@ const cities = {
         name: "Milan",
         region: "Lombardy",
         description:
-            "Italy's modern capital of design, fashion and business, with a fascinating historic center.",
+            "Not the most historic city, but it is the beating heart of modern Italy. A great downtown to wander about and the best shopping in the world.",
         stops: [
             "Milan Cathedral",
             "Galleria Vittorio Emanuele II",
@@ -1014,7 +1017,7 @@ const cities = {
         name: "Rome",
         region: "Lazio",
         description:
-            "Ancient ruins, Renaissance masterpieces and some of Italy's best food.",
+            "We can go eat pizza where Julius Caesar got stabbed, see incredible ruins, and go see the Pope's house. Home of some of the best pasta in italy.",
         stops: [
             "Colosseum",
             "Roman Forum",
@@ -1028,7 +1031,8 @@ const cities = {
             ["Venice", 4],
             ["Milan", 3],
             ["Verona", 3],
-            ["Barcelona", 2]
+            ["Barcelona", 2],
+           ["Naples", 1]
         ],
         stayLength: "2-3"
     },
@@ -1037,7 +1041,7 @@ const cities = {
         name: "Barcelona",
         region: "Catalonia, Spain",
         description:
-            "A vibrant city with a unique blend of Gothic and modernist architecture.",
+            "The Sagrada is finished and I know you want to go see it. The flight from Trieste is very cheap.",
         stops: [
             "Sagrada Família",
             "Gothic Quarter",
@@ -1049,7 +1053,8 @@ const cities = {
             ["Trieste", 2],
             ["Rome", 2],
             ["Milan", 2],
-            ["Bologna", 2]
+            ["Bologna", 2],
+            ["Naples", 3]
         ],
         stayLength: "1-3"
     },
@@ -1058,7 +1063,7 @@ const cities = {
         name: "Vienna",
         region: "Austria",
         description:
-            "A city of imperial palaces, classical music, and rich coffeehouse culture.",
+            "A city of imperial palaces, classical music, and rich coffeehouse culture. We absolutely love it here.",
         stops: [
             "Vienna Architectural Museum",
             "Schönbrunn Palace",
@@ -1080,7 +1085,7 @@ const cities = {
         name: "Graz",
         region: "Styria, Austria",
         description:
-            "A charming city with a mix of Renaissance and modern architecture, known for its culinary scene.",
+            "Easy to get to from Trieste and supposedly an incredible city for food.",
         stops: [
             "Schlossberg & Clock Tower",
             "Old Town Graz",
@@ -1101,7 +1106,7 @@ const cities = {
         name: "Pisa",
         region: "Tuscany",
         description:
-            "Famous for its iconic Leaning Tower, Pisa offers a mix of history and culture.",
+            "Go see the tower before it falls down. You know you need to tak The Picture.",
         stops: [
             "Leaning Tower of Pisa",
             "Piazza dei Miracoli",
@@ -1115,8 +1120,30 @@ const cities = {
             ["Venice", 3]
         ],
         stayLength: "1"
-    }
+    },
 
+   Naples: {
+      name: "Naples",
+      region: "Campania",
+      description: 
+         "Birthplace of pizza, arancini, and mugging. Pompeii is nearby.",
+      stops: [
+         "Pompeii",
+         "Capodimonte Royal Palace",
+         "Spaccanapoli",
+         "National Archeological Museum",
+         "Castel dell'Ovo"
+         ],
+      coordinates: {40.85631 14.24641},
+      recommendedNext: [
+         ["Rome", 1],
+         ["Florence", 3],
+         ["Trieste", 2],
+         ["Venice", 2],
+         ["Barcelona", 3]
+      ],
+      stayLength: "1-2"
+   }
 };
 
 
